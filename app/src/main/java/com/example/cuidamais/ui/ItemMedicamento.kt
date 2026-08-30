@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cuidamais.model.Medicamento
 
+// card que mostra um medicamento ja cadastrado na lista/agenda
+// o checkbox marca se o remedio ja foi tomado ou n ao
 @Composable
 fun ItemMedicamento(
     medicamento: Medicamento,
@@ -15,7 +17,7 @@ fun ItemMedicamento(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp)
+            .padding(vertical = 6.dp, horizontal = 4.dp)
     ) {
         Row(
             modifier = Modifier
@@ -24,10 +26,16 @@ fun ItemMedicamento(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text(text = medicamento.nome, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = medicamento.nome,
+                    style = MaterialTheme.typography.titleMedium
+                )
                 Text(text = "Dosagem: ${medicamento.dosagem}")
                 Text(text = "Horário: ${medicamento.horario}")
             }
+
+            // ao clicar, avisa o pai (stateful) pra atualizar o estado
+            // esse componente aqui nao guarda nada, so exibe e dispara o evento
             Checkbox(
                 checked = medicamento.tomado,
                 onCheckedChange = { onToggleTomado(medicamento.id) }

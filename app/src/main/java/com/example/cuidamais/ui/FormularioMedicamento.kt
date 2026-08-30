@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+// tela de cadastro de um novo medicamento
+// os valores e callbacks vem de fora (state hoisting), aqui e so o layout
 @Composable
 fun FormularioMedicamento(
     nome: String,
@@ -19,11 +21,14 @@ fun FormularioMedicamento(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        Text(text = "Novo Medicamento", style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = "Novo Medicamento",
+            style = MaterialTheme.typography.titleMedium
+        )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = nome,
@@ -32,7 +37,7 @@ fun FormularioMedicamento(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
             value = dosagem,
@@ -41,8 +46,10 @@ fun FormularioMedicamento(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
+        // por enquanto o horario e digitado como texto mesmo (ex: 08:00)
+        // dava pra usar um TimePicker mas ficaria mais complexo pro momento
         OutlinedTextField(
             value = horario,
             onValueChange = onHorarioChange,
@@ -50,7 +57,7 @@ fun FormularioMedicamento(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = onAdicionarClick,

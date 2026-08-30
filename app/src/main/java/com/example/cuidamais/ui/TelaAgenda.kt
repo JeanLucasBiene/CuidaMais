@@ -12,15 +12,17 @@ import com.example.cuidamais.model.Medicamento
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TelaAgenda() {
-    // Estado da lista de medicamentos (o "banco de dados" da tela, por enquanto em memória)
+    // lista de medicamentos cadastrados, por enquanto so em memoria (sem banco ainda)
     var medicamentos by remember { mutableStateOf(listOf<Medicamento>()) }
 
-    // Estado dos campos do formulário
+    // estado dos campos do formulario, fica aqui em cima (state hoisting)
     var nome by remember { mutableStateOf("") }
     var dosagem by remember { mutableStateOf("") }
     var horario by remember { mutableStateOf("") }
-    // Contador simples pra gerar um id único a cada novo item
+
+    // id vai incrementando a cada cadastro novo
     var proximoId by remember { mutableIntStateOf(1) }
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("CuidaMais - Agenda de Medicamentos") })
@@ -39,6 +41,7 @@ fun TelaAgenda() {
                 horario = horario,
                 onHorarioChange = { horario = it },
                 onAdicionarClick = {
+                    // validacao simples, so adiciona se os 3 campos estiverem preenchidos
                     if (nome.isNotBlank() && dosagem.isNotBlank() && horario.isNotBlank()) {
                         medicamentos = medicamentos + Medicamento(
                             id = proximoId,
@@ -47,7 +50,8 @@ fun TelaAgenda() {
                             horario = horario
                         )
                         proximoId += 1
-                        // Limpa o formulário depois de adicionar
+
+                        // limpa os campos pra poder cadastrar o proximo
                         nome = ""
                         dosagem = ""
                         horario = ""
@@ -56,11 +60,19 @@ fun TelaAgenda() {
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
             Text(
                 text = "Medicamentos cadastrados (${medicamentos.size})",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+
+            if (medicamentos.isEmpty()) {
+                Text(
+                    text = "Nenhum medicamento cadastrado ainda",
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
 
             LazyColumn(
                 modifier = Modifier
