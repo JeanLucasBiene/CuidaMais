@@ -11,17 +11,15 @@ import com.example.cuidamais.model.Medicamento
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TelaAgenda() {
-    // lista de medicamentos cadastrados, por enquanto so em memoria (sem banco ainda)
-    var medicamentos by remember { mutableStateOf(listOf<Medicamento>()) }
-
+fun TelaAgenda(
+    // a lista agora vem da TelaPrincipal, senao ela some quando troca de aba
+    medicamentos: List<Medicamento>,
+    onMedicamentosChange: (List<Medicamento>) -> Unit
+) {
     // estado dos campos do formulario, fica aqui em cima (state hoisting)
     var nome by remember { mutableStateOf("") }
     var dosagem by remember { mutableStateOf("") }
     var horario by remember { mutableStateOf("") }
-
-    // id vai incrementando a cada cadastro novo
-    var proximoId by remember { mutableIntStateOf(1) }
 
     Scaffold(
         topBar = {
@@ -41,15 +39,20 @@ fun TelaAgenda() {
                 horario = horario,
                 onHorarioChange = { horario = it },
                 onAdicionarClick = {
-                    // validacao simples, so adiciona se os 3 campos estiverem preenchidos
-                    if (nome.isNotBlank() && dosagem.isNotBlank() && horario.isNotBlank()) {
-                        medicamentos = medicamentos + Medicamento(
-                            id = proximoId,
-                            nome = nome,
-                            dosagem = dosagem,
-                            horario = horario
+                    // so adiciona se tiver nome, dosagem maior que zero e um horario que existe
+                    if (nome.isNotBlank() && (dosagem.toIntOrNull() ?: 0) > 0 && horarioValido(horario)) {
+                        // id novo = maior id que ja existe + 1
+                        val novoId = (medicamentos.maxOfOrNull { it.id } ?: 0) + 1
+
+                        onMedicamentosChange(
+                            medicamentos + Medicamento(
+                                id = novoId,
+                                nome = nome,
+                                // junta o mg e os dois pontos aqui, no formulario so tem os numeros
+                                dosagem = "$dosagem mg",
+                                horario = formatarHorario(horario)
+                            )
                         )
-                        proximoId += 1
 
                         // limpa os campos pra poder cadastrar o proximo
                         nome = ""
@@ -67,6 +70,15 @@ fun TelaAgenda() {
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
+            if (medicamentos.isNotEmpty()) {
+                Text(
+                    text = "Marque a caixinha do medicamento pra ver a opção de excluir",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+
             if (medicamentos.isEmpty()) {
                 Text(
                     text = "Nenhum medicamento cadastrado ainda",
@@ -79,13 +91,13 @@ fun TelaAgenda() {
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-                items(medicamentos) { medicamento ->
+                // key = id faz o card lembrar de qual medicamento ele é, mesmo depois de excluir um
+                items(medicamentos, key = { it.id }) { medicamento ->
                     ItemMedicamento(
                         medicamento = medicamento,
-                        onToggleTomado = { id ->
-                            medicamentos = medicamentos.map {
-                                if (it.id == id) it.copy(tomado = !it.tomado) else it
-                            }
+                        onExcluir = { id ->
+                            // cria uma lista nova sem o medicamento excluido
+                            onMedicamentosChange(medicamentos.filter { it.id != id })
                         }
                     )
                 }

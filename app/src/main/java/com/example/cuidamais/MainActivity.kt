@@ -11,8 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.cuidamais.ui.TelaAgenda
 import com.example.cuidamais.ui.TelaLogin
+import com.example.cuidamais.ui.TelaPrincipal
 import com.example.cuidamais.ui.theme.CuidaMaisTheme
 
 
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
 
 
                     if (logado) {
-                        TelaAgenda()
+                        TelaPrincipal()
                     } else {
                         TelaLogin(
                             email = email,

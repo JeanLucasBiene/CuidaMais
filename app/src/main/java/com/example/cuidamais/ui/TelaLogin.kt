@@ -7,11 +7,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
 import androidx.compose.ui.draw.clip
@@ -30,6 +35,10 @@ fun TelaLogin(
     onEntrarClick: () -> Unit,
     onCriarContaClick: () -> Unit
 ) {
+    // se a senha ta aparecendo ou escondida, so mexe no visual entao fica aqui mesmo
+    var senhaVisivel by remember { mutableStateOf(false) }
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -82,8 +91,20 @@ fun TelaLogin(
             label = { Text("Senha") },
             singleLine = true,
             shape = RoundedCornerShape(14.dp),
-            visualTransformation = PasswordVisualTransformation(),
+            // se a senha ta visivel mostra o texto normal, senao troca por bolinhas
+            visualTransformation = if (senhaVisivel) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            trailingIcon = {
+                // olho aberto = senha escondida (toca pra mostrar), olho cortado = senha aparecendo
+                IconButton(onClick = { senhaVisivel = !senhaVisivel }) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (senhaVisivel) R.drawable.ic_visibility_off else R.drawable.ic_visibility
+                        ),
+                        contentDescription = if (senhaVisivel) "Esconder senha" else "Mostrar senha"
+                    )
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         )
 
