@@ -20,10 +20,10 @@ import com.example.cuidamais.model.Medicamento
 import com.example.cuidamais.model.RegistroSaude
 import com.example.cuidamais.model.itensAmbientePadrao
 
-// tela que aparece depois do login, com a barra de baixo pra trocar entre as 3 telas
+// tela que aparece depois do login, com a barra de baixo pra trocar entre as 4 telas
 @Composable
 fun TelaPrincipal() {
-    // aba selecionada: 0 = medicamentos, 1 = saude, 2 = ambiente
+    // aba selecionada: 0 = medicamentos, 1 = saude, 2 = ambiente, 3 = perfil
     var abaAtual by remember { mutableIntStateOf(0) }
 
 
@@ -59,6 +59,13 @@ fun TelaPrincipal() {
                     icon = { Text("🏠") },
                     label = { Text("Ambiente") }
                 )
+
+                NavigationBarItem(
+                    selected = abaAtual == 3,
+                    onClick = { abaAtual = 3 },
+                    icon = { Text("👤") },
+                    label = { Text("Perfil") }
+                )
             }
         }
     ) { paddingInterno ->
@@ -79,10 +86,12 @@ fun TelaPrincipal() {
                     onRegistroChange = { registroSaude = it }
                 )
 
-                else -> TelaChecklistAmbiente(
+                2 -> TelaChecklistAmbiente(
                     itens = itensAmbiente,
                     onItensChange = { itensAmbiente = it }
                 )
+
+                else -> PerfilScreen()
             }
         }
     }
